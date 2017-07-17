@@ -6,27 +6,27 @@
 + Lisp-style comments
 
 ```lisp
-(233) ; Error: 233 isn't a function
+(233) ; 233
 
-233 ; OK: 233 is a value
+233 ; 233
 
-(print 233) ; OK: 233 is a java.lang.Integer
+(type 233) ; 233 is a java.lang.Integer
 
 (-> fucker 233) ; OK
 
-fucker ; OK, fucker is a variable
+fucker ; 233
 ```
 
 + Variables
 
 ```lisp
-Lice > 12903
+|> 12903
 12903 => java.lang.Integer
 
-Lice > (-> fuck 9320)
+|> (-> fuck 9320)
 9320 => java.lang.Integer
 
-Lice > fuck
+|> fuck
 9320 => java.lang.Integer
 ```
 
@@ -77,28 +77,28 @@ false ; false
 + Primitives
 
 ```lisp
-Lice > (- 1N 10)
+|> (- 1N 10)
 -9 => java.math.BigInteger
 
-Lice > (- 10N 1)
+|> (- 10N 1)
 9 => java.math.BigInteger
 
-Lice > (+ 1 1)
+|> (+ 1 1)
 2 => java.lang.Integer
 
-Lice > (+ 9999999999999999999999999999999999999N 9999999999)
+|> (+ 9999999999999999999999999999999999999N 9999999999)
 10000000000000000000000000009999999998 => java.math.BigInteger
 
-Lice > (- 9999999999999999999999999999999999999N 9999999999)
+|> (- 9999999999999999999999999999999999999N 9999999999)
 9999999999999999999999999990000000000 => java.math.BigInteger
 
-(+ 1 1)
+|> (+ 1 1)
 2 => java.lang.Integer
 
-Lice > (+ 1 1.0)
+|> (+ 1 1.0)
 2.0 => java.lang.Float
 
-Lice > (+ 1 1.1287391873917392379372193792137198237189237291)
+|> (+ 1 1.1287391873917392379372193792137198237189237291)
 2.128739187391739 => java.lang.Double
 ```
 
@@ -108,8 +108,7 @@ Lice > (+ 1 1.1287391873917392379372193792137198237189237291)
 (if (! (file-exists? "save"))
     (|> (write-file (file "save") "0")
          (println "fuck"))
-    (println "shit")
-)
+    (println "shit"))
 
 (print (read-url (url "http://ice1000.tech")))
 
