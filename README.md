@@ -134,13 +134,12 @@ Lice > (+ 1 1.1287391873917392379372193792137198237189237291)
 (->str (file "deep")) ; result: "deep"
 ```
 
-+ Lazy evaluation
++ `if` is function, too
 
 ```lisp
 (println (if (>= 1 2)
     (read-file (file "out")) ; will not be read
-    (read-file (file "in"))
-))
+    (read-file (file "in"))))
 ```
 
 + A global variable map to store values
@@ -157,6 +156,162 @@ Lice > (+ 1 1.1287391873917392379372193792137198237189237291)
 ; if not, return var.
 ```
 
++ Loop
+
+```lisp
+(while (> 10 (<-> i 0))
+       (|> (print i)
+           (-> i (+ 1 i))))
+; |> means to evaluate every parameters given
+; just like 'run' in clojure, 'begin' in scheme
+; this prints from 0 to 9
+```
+
+## Functional Programming
+
++ Functions are first-class:
+
+```lisp
+(((if true + -)) 11 11)
+; 22
+; I'll show you the procedure:
+;
+; (((if true + -)) 11 11)
+; ((+) 11 11)
+; (+ 11 11)
+; 22
+
++
+; 0
+
+-
+; 0
+
+*
+; 1
+```
+
+### call-by-what?
+
++ Rules
+
+the def-family functions defines functions.
+
+```lisp
+; rule
+(def[xxx] function-name [parameters1, parameters2, ..] function body)
+
+; example
+(def gcd a b (if (== 0 b) a (gcd b (% a b))))
+;^^^ ^^^ ^ ^ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+; |   |  | |                |
+; |   |  | |         function body
+; |   | parameters
+; | the name of the function
+;the key word
+```
+
++ Call by value(the mostly used)
+
+Lambdas:
+
+```lisp
+((lambda a b (+ a b)) 120 230)
+; 120 + 230
+
+((lambda a b (* a b)) 120 230)
+; 120 * 230
+
+((lambda a (+ a a)) 233)
+; 466
+```
+
+Functions:
+
+```lisp
+(def gcd a b (if (== 0 b) a (gcd b (% a b))))
+(gcd 24 36)
+; 12
+```
+
++ Call by name(like C style macro)
+
+Lambdas:
+
+```lisp
+(-> side-effect 10)
+((expr used-twice
+        (+ used-twice used-twice))
+  (|> (-> side-effect (+ side-effect 1))
+      233))
+
+side-effect
+; 12
+```
+
+Functions:
+
+```lisp
+(defexpr f op (op true 1 2))
+(f if)
+; 1
+```
+
++ Call by need(lazy evaluation)
+
+Lambdas:
+
+```lisp
+((lazy unused
+       "any-val")
+  (|> (def side-effect true)
+      233))
+(def? side-effect)
+; false
+```
+
+Functions:
+
+```lisp
+(deflazy unless condition a b (if condition b a))
+(defexpr f op (op true 1 2))
+(f unless)
+; 2
+```
+
+## Passing functions/lambdas as arguments
+
+You can only use `expr` and `defexpr`. Like the example given above,
+
+```lisp
+(defexpr f op (op true 1 2))
+(f if)
+; 1
+
+(deflazy unless condition a b (if condition b a))
+(defexpr f op (op true 1 2))
+(f unless)
+; 2
+```
+
+Or it will be invoked by passing 0 arguments before passed as an argument:
+
+```lisp
+((expr op (op 1 2)) +)
+; 3, nice
+((lazy op (op 1 2)) +)
+; 0, shit
+((lambda op (op 1 2)) +)
+; 0, shit
+
+(def fun a b
+  (+ (* a a) (* b b)))
+((expr op (op 3 4)) fun)
+; 25, nice
+```
+
+## Built-in stuffs
+
 + List processing
 
 ```lisp
@@ -170,18 +325,7 @@ Lice > (+ 1 1.1287391873917392379372193792137198237189237291)
 ; a pair: <1, <2, <3, <4, null>>>>
 ```
 
-+ Loop
-
-```lisp
-(while (> 10 (<-> i 0))
-       (|> (print i)
-           (-> i (+ 1 i))
-       )
-)
-; |> means to evaluate every parameters given
-; just like 'run' in clojure, 'begin' in scheme
-; this prints from 0 to 9
-```
+## LJI/Lice JVM Interface/Java API
 
 + Invoking Java
 
