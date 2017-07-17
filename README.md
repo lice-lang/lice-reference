@@ -325,6 +325,30 @@ Or it will be invoked by passing 0 arguments before passed as an argument:
 ; a pair: <1, <2, <3, <4, null>>>>
 ```
 
++ Metaprogramming
+
+```lisp
+(def? if)
+; true
+
+(def? shit)
+; false
+
+(undef def?)
+(def? if)
+; error: `def?` undefined
+
+(undef undef)
+(undef whatever)
+; error: `undef` undefined
+
+(eval "(+ 1 1)")
+; 2
+
+(eval "(eval \"(+ 1 1)\")")
+; 2
+```
+
 ## LJI/Lice JVM Interface/Java API
 
 + Invoking Java
@@ -357,51 +381,51 @@ class Main {
 
 ## Repl
 
-The repl has two versions, a GUI one based on swing, and a CUI one.
+The repl has two versions, the GUI one based on swing and no longer maintained, the CUI one is more powerful(with completion).
 
 Here are some examples.
 
 ```lisp
-Lice > (+ 1 1)
+|> (+ 1 1)
 2 => java.lang.Integer
 
-Lice> ()
+|> ()
 null => java.lang.Object
 
-Lice > (eval "(+ 1 1)")
-2 => java.lang.Integer
-null => java.lang.Object
-
-Lice > (eval (str-con "(+ " "1 " "1)"))
+|> (eval "(+ 1 1)")
 2 => java.lang.Integer
 null => java.lang.Object
 
-Lice > (cons 1 11 1)
+|> (eval (str-con "(+ " "1 " "1)"))
+2 => java.lang.Integer
+null => java.lang.Object
+
+|> (cons 1 11 1)
 [1, 11, 1] => java.util.ArrayList
 
-Lice > (eval (read-file (file "sample/tests/test3.lice")))
+|> (eval (read-file (file "sample/tests/test3.lice")))
 16769025 => java.lang.Integer
 My name is Van, I'm an artist => java.lang.String
 My name is Van, I'm an artist => java.lang.String
 
-Lice > (if (> 2 1) 1 2)
+|> (if (> 2 1) 1 2)
 1 => java.lang.Integer
 
-Lice > (-> file (file "fuck_you"))
+|> (-> file (file "fuck_you"))
 fuck_you => java.io.File
 
-Lice > (write-file file (str-con "deep" " dark fantasy"))
+|> (write-file file (str-con "deep" " dark fantasy"))
 deep dark fantasy => java.lang.String
 
-Lice > (read-file file)
+|> (read-file file)
 deep dark fantasy => java.lang.String
 
-Lice > ([|] 1 2 3 4 5)
+|> ([|] 1 2 3 4 5)
 [1 [2 [3 [4 [5 null]]]]] => org.lice.core.Pair
 
-Lice > (-> i ([|] 1 2 3 4 5 6 7))
+|> (-> i ([|] 1 2 3 4 5 6 7))
 [1 [2 [3 [4 [5 [6 [7 null]]]]]]] => org.lice.core.Pair
 
-Lice > (tail (tail i))
+|> (tail (tail i))
 [3 [4 [5 [6 [7 null]]]]] => org.lice.core.Pair
 ```
