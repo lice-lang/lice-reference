@@ -67,7 +67,7 @@ null ; null
 true ; true
 false ; false
 10 ; 10
-010 ; 8
+0o10 ; 8
 0x10 : 16
 0b10 ; 2
 233N ; BigInteger("233")
@@ -123,7 +123,7 @@ false ; false
 ```lisp
 (str->int "12345678") ; dicimal
 (str->int "0xFFF") ; hex
-(str->int "02333") ; octal
+(str->int "0o2333") ; octal
 (str->int "0b10100101") ; binary
 
 (int->hex 12345678) ; result: 0xbc614e
