@@ -1,4 +1,4 @@
-# lice-reference
+# Lice Reference
 
 ## Language design
 
@@ -12,8 +12,10 @@
 
 (type 233) ; 233 is a java.lang.Integer
 
+; assignment
 (-> fucker 233) ; OK
 
+; immediate value
 fucker ; 233
 ```
 
@@ -43,6 +45,7 @@ fucker ; 233
 (print 1) ; 1
 (type 1) ; java.lang.Integer
 
+; same as Java "String.format"
 (format "%d %d" 233 233)
 ```
 
@@ -107,12 +110,12 @@ false ; false
 ```lisp
 (if (! (file-exists? "save"))
     (|> (write-file (file "save") "0")
-         (println "fuck"))
-    (println "shit"))
+         (print "no no no"))
+    (println "yes yes yes"))
 
 (print (read-url (url "http://ice1000.tech")))
 
-(print (read-file (file "src/lice/compiler/util/SymbolList.kt")))
+(print (read-file (file "src/lice/core/SymbolList.kt")))
 
 (write-file (file "output")
             (str-con "deep " "dark" "fantasy"))
@@ -135,8 +138,10 @@ false ; false
 
 + `if` is function, too
 
+It's lazily evaluated.
+
 ```lisp
-(println (if (>= 1 2)
+(print (if (>= 1 2)
     (read-file (file "out")) ; will not be read
     (read-file (file "in"))))
 ```
@@ -147,20 +152,16 @@ false ; false
 (-> var "actual") ; put "actual" into "var"
 
 (print var) ; prints "actual"
-
-(<-> var "darkholm")
-; if var is null,
-; (-> var "darkholm"),
-; then return "darkholm".
-; if not, return var.
 ```
 
 + Loop
 
 ```lisp
-(while (> 10 (<-> i 0))
+(-> i 0)
+(while (> 10 i)
        (|> (print i)
            (-> i (+ 1 i))))
+(undef i)
 ; |> means to evaluate every parameters given
 ; just like 'run' in clojure, 'begin' in scheme
 ; this prints from 0 to 9
@@ -171,22 +172,21 @@ false ; false
 + Functions are first-class:
 
 ```lisp
-(((if true + -)) 11 11)
+((if true + -) 11 11)
 ; 22
 ; I'll show you the procedure:
 ;
-; (((if true + -)) 11 11)
-; ((+) 11 11)
+; ((if true + -) 11 11)
 ; (+ 11 11)
 ; 22
 
-+
+(+)
 ; 0
 
--
+(-)
 ; 0
 
-*
+(*)
 ; 1
 ```
 
@@ -210,9 +210,9 @@ the def-family functions defines functions.
 ;the key word
 ```
 
-+ Call by value(the mostly used)
++ Call by value (the mostly used)
 
-Lambdas:
+To define a call-by-value lambda, use `lambda`:
 
 ```lisp
 ((lambda a b (+ a b)) 120 230)
@@ -233,9 +233,9 @@ Functions:
 ; 12
 ```
 
-+ Call by name(like C style macro)
++ Call by name (like C style macro, but not the same)
 
-Lambdas:
+To define a call-by-name lambda, use `expr`:
 
 ```lisp
 (-> side-effect 10)
@@ -258,7 +258,7 @@ Functions:
 
 + Call by need(lazy evaluation)
 
-Lambdas:
+To define a call-by-need to lambda, use `lazy`:
 
 ```lisp
 ((lazy unused
@@ -278,35 +278,12 @@ Functions:
 ; 2
 ```
 
-## Passing functions/lambdas as arguments
++ Higher Order Functions
 
-You can only use `expr` and `defexpr`. Like the example given above,
-
-```lisp
-(defexpr f op (op true 1 2))
-(f if)
-; 1
-
-(deflazy unless condition a b (if condition b a))
-(defexpr f op (op true 1 2))
-(f unless)
-; 2
-```
-
-Or it will be invoked by passing 0 arguments before passed as an argument:
+You can use lambda expressions everywhere, lambdas are first-class in Lice.
 
 ```lisp
-((expr op (op 1 2)) +)
-; 3, nice
-((lazy op (op 1 2)) +)
-; 0, shit
-((lambda op (op 1 2)) +)
-; 0, shit
-
-(def fun a b
-  (+ (* a a) (* b b)))
-((expr op (op 3 4)) fun)
-; 25, nice
+((lambda op (op 1 2 3)) +)
 ```
 
 ## Built-in stuffs
@@ -343,9 +320,6 @@ Or it will be invoked by passing 0 arguments before passed as an argument:
 
 (eval "(+ 1 1)")
 ; 2
-
-(eval "(eval \"(+ 1 1)\")")
-; 2
 ```
 
 ## LJI/Lice JVM Interface/Java API
@@ -354,18 +328,12 @@ Or it will be invoked by passing 0 arguments before passed as an argument:
 
 ```java
 // java
-import lice.Lice;
-import lice.compiler.model.ValueNode;
-import lice.compiler.util.SymbolList;
-
-import java.io.File;
-
-class Main {
-	public static void main(String[] args) {
+public class Main {
+	public static void main(String... args) {
 		SymbolList sl = new SymbolList();
-		sl.defineFunction(
+		sl.provideFunction(
 				"java-api-invoking",
-				ls -> new ValueNode(100)
+				ls -> 100 // ls is a list of Objects, cast them!
 		);
 		Lice.run(new File("sample/test10.lice"), sl);
 	}
@@ -380,7 +348,7 @@ class Main {
 
 ## Repl
 
-The repl has two versions, the GUI one based on swing and no longer maintained, the CUI one is more powerful(with completion).
+Lice has a command line REPL, which will do completion, or list all the candidates when you press <kbd>tab</kbd>.
 
 Here are some examples.
 
